@@ -1,41 +1,35 @@
 import mmc
-from mmc.asm_comp import Compiler
+
+from mmc.asm_comp import Compiler as AsmCompiler
+from compiler import MediumLevelLanguage as MMLCompiler
 
 src = """
-        INP
-        STA $num1
-        OUT
 
-        LDA $plus
-        OTC
+int a;
+int b = 42;
+int c = a + b - 3;
 
-        INP
-        STA $num2
-        OUT
-        
-        LDA $equals
-        OTC
-        
-        LDA $num1
-        ADD $num2
-        STA $output
-        OUT
-    
-        HLT
-num1    DAT 1
-num2    DAT 2
-output  DAT 0
-plus    DAT 43
-equals  DAT 61
+a = b + 8;
+
+func add(int a, int b) returns int {
+    return a + b
+}
+
 """
 
-comp = Compiler(src)
-program = comp.build()
+comp1 = MMLCompiler(src)
+asm_src = comp1.build()
+
+print(">> START ASM PROGRAM")
+for i, line in enumerate(asm_src):
+    print(f"{i}: {line}")
+
+comp2 = AsmCompiler(asm_src)
+program = comp2.build()
 
 print(">> START PROGRAM")
 for i, line in enumerate(program):
     print(f"{i}: {line}")
-print(">> END PROGRAM")
 
 x = mmc.MMC()
 x.write_program(program)
